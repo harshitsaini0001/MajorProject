@@ -28,28 +28,31 @@ app.use(express.json());
 app.use(methodOverride("_method"));
 app.engine("ejs",ejsmate);
 app.use(express.static(path.join(__dirname,"/public")));
-const dbUrl=process.env.ATLASDB_URL;
-main().then(()=>{
-    console.log("connection sucessful");
-})
-.catch(()=>{
-    console.log(err);
-})
+const dbUrl = process.env.ATLASDB_URL;
 
-async function main(){
+main()
+    .then(() => {
+        console.log("connection successful");
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+
+async function main() {
     await mongoose.connect(dbUrl);
-    
 }
-const store=MongoStore.create({ 
-    mongoUrl:dbUrl,
-    crypto:{
-        secret:process.env.SECRET,
+
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    crypto: {
+        secret: process.env.SECRET
     },
-    touchAfter:24*3600,
- });
-store.on("error",()=>{
-    console.log("ERROR IN MONGO SESSION STORE",err);
-})
+    touchAfter: 24 * 3600
+});
+
+store.on("error", (err) => {
+    console.log("ERROR IN MONGO SESSION STORE", err);
+});
 const sessionOptions={
     store,
     secret:process.env.SECRET,
